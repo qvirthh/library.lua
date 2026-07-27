@@ -1,270 +1,475 @@
--- qvirthh Hub | PS99 - Made By qvirthh
+-- qvirthh Hub UI Library
+-- Made By qvirthh
+-- Version 1.0
 
-print("qvirthh Hub | PS99 - Made By qvirthh")
+local Library = {}
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/qvirthh/library.lua/refs/heads/main/library%20file"))()
+-- Theme colors
+local Themes = {
+    Classic = {bg = Color3.fromRGB(30, 30, 30), accent = Color3.fromRGB(100, 100, 100)},
+    Assassin = {bg = Color3.fromRGB(10, 10, 20), accent = Color3.fromRGB(200, 50, 50)},
+    Cyberpunk = {bg = Color3.fromRGB(10, 0, 20), accent = Color3.fromRGB(0, 255, 255)},
+    Matrix = {bg = Color3.fromRGB(0, 10, 0), accent = Color3.fromRGB(0, 255, 0)},
+    Ocean = {bg = Color3.fromRGB(10, 0, 30), accent = Color3.fromRGB(100, 0, 200)},
+    Gold = {bg = Color3.fromRGB(30, 20, 0), accent = Color3.fromRGB(255, 200, 0)},
+    Galaxy = {bg = Color3.fromRGB(8, 0, 25), accent = Color3.fromRGB(150, 0, 255)}
+}
 
-if not Library then
-    print("ERROR: Failed to load UI library!")
-    return
-end
+-- Create a new window
+function Library:CreateWindow(config)
+    config = config or {}
+    local window = {
+        Title = config.Title or "qvirthh Hub",
+        HubName = config.HubName or "qvirthh Hub",
+        Theme = config.Theme or "Ocean",
+        SizeUI = config.SizeUI or 1,
+        DefaultToggleKey = config.DefaultToggleKey or Enum.KeyCode.LeftControl,
+        UseKey = config.UseKey or false,
+        CurrentTheme = Themes[config.Theme] or Themes.Ocean
+    }
 
-local Window = Library:CreateWindow({
-    Title = "qvirthh Hub | PS99",
-    HubName = "qvirthh Hub",
-    Theme = "Ocean",
-    SizeUI = 1,
-    DefaultToggleKey = Enum.KeyCode.LeftControl,
-    UseKey = false
-})
+    -- Create ScreenGui
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = window.HubName
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    ScreenGui.ResetOnSpawn = false
 
-local AutoFarmTab = Window:CreateTab("Auto Farm")
-local SettingsTab = Window:CreateTab("UI Setting")
+    -- Main Frame
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Size = UDim2.new(0, 420 * window.SizeUI, 0, 520 * window.SizeUI)
+    MainFrame.Position = UDim2.new(0.5, -210 * window.SizeUI, 0.5, -260 * window.SizeUI)
+    MainFrame.BackgroundColor3 = window.CurrentTheme.bg
+    MainFrame.BorderSizePixel = 2
+    MainFrame.BorderColor3 = window.CurrentTheme.accent
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+    MainFrame.ClipsDescendants = true
+    MainFrame.Parent = ScreenGui
 
-local autoFarm = false
-local autoCollect = false
-local autoHatch = false
-local autoMerchant = false
-local autoEvent = false
-local autoPlant = false
-local autoPet = false
-local autoRebirth = false
-local antiAFK = false
+    -- Gradient Background
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, window.CurrentTheme.bg),
+        ColorSequenceKeypoint.new(0.5, window.CurrentTheme.accent),
+        ColorSequenceKeypoint.new(1, window.CurrentTheme.bg)
+    })
+    Gradient.Rotation = 45
+    Gradient.Transparency = NumberSequence.new(0.8)
+    Gradient.Parent = MainFrame
 
-AutoFarmTab:CreateToggle({
-    Name = "⚡ Auto Farm",
-    Default = false,
-    Callback = function(state)
-        autoFarm = state
-        if state then
-            task.spawn(function()
-                while autoFarm and task.wait(0.1) do
-                    pcall(function()
-                        for _, v in pairs(workspace:GetDescendants()) do
-                            if v:IsA("Model") and v:FindFirstChild("ClickDetector") then
-                                fireclickdetector(v.ClickDetector)
+    -- Title Bar
+    local TitleBar = Instance.new("Frame")
+    TitleBar.Size = UDim2.new(1, 0, 0, 50)
+    TitleBar.BackgroundColor3 = window.CurrentTheme.accent
+    TitleBar.BackgroundTransparency = 0.2
+    TitleBar.BorderSizePixel = 0
+    TitleBar.Parent = MainFrame
+
+    -- Title Text
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(0.8, 0, 0.6, 0)
+    Title.Position = UDim2.new(0.05, 0, 0.1, 0)
+    Title.Text = window.Title
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundTransparency = 1
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 18
+    Title.Parent = TitleBar
+
+    -- Subtitle
+    local SubTitle = Instance.new("TextLabel")
+    SubTitle.Size = UDim2.new(0.8, 0, 0.3, 0)
+    SubTitle.Position = UDim2.new(0.05, 0, 0.65, 0)
+    SubTitle.Text = "✦ Made By qvirthh ✦"
+    SubTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+    SubTitle.BackgroundTransparency = 1
+    SubTitle.TextXAlignment = Enum.TextXAlignment.Left
+    SubTitle.Font = Enum.Font.Gotham
+    SubTitle.TextSize = 11
+    SubTitle.Parent = TitleBar
+
+    -- Close Button
+    local CloseBtn = Instance.new("TextButton")
+    CloseBtn.Size = UDim2.new(0, 35, 1, -10)
+    CloseBtn.Position = UDim2.new(1, -40, 0, 5)
+    CloseBtn.Text = "✕"
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    CloseBtn.Font = Enum.Font.GothamBold
+    CloseBtn.TextSize = 16
+    CloseBtn.BorderSizePixel = 0
+    CloseBtn.Parent = TitleBar
+
+    CloseBtn.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    -- Minimize Button
+    local MinBtn = Instance.new("TextButton")
+    MinBtn.Size = UDim2.new(0, 35, 1, -10)
+    MinBtn.Position = UDim2.new(1, -80, 0, 5)
+    MinBtn.Text = "─"
+    MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinBtn.BackgroundColor3 = window.CurrentTheme.accent
+    MinBtn.Font = Enum.Font.GothamBold
+    MinBtn.TextSize = 16
+    MinBtn.BorderSizePixel = 0
+    MinBtn.Parent = TitleBar
+
+    local minimized = false
+    MinBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        if minimized then
+            MainFrame.Size = UDim2.new(0, 420 * window.SizeUI, 0, 50)
+            ScrollFrame.Visible = false
+            MinBtn.Text = "□"
+        else
+            MainFrame.Size = UDim2.new(0, 420 * window.SizeUI, 0, 520 * window.SizeUI)
+            ScrollFrame.Visible = true
+            MinBtn.Text = "─"
+        end
+    end)
+
+    -- Scroll Frame
+    local ScrollFrame = Instance.new("ScrollingFrame")
+    ScrollFrame.Size = UDim2.new(1, 0, 1, -50)
+    ScrollFrame.Position = UDim2.new(0, 0, 0, 50)
+    ScrollFrame.BackgroundTransparency = 1
+    ScrollFrame.BorderSizePixel = 0
+    ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ScrollFrame.ScrollBarThickness = 6
+    ScrollFrame.ScrollBarImageColor3 = window.CurrentTheme.accent
+    ScrollFrame.Parent = MainFrame
+
+    local Canvas = Instance.new("Frame")
+    Canvas.Size = UDim2.new(1, 0, 0, 0)
+    Canvas.BackgroundTransparency = 1
+    Canvas.Parent = ScrollFrame
+
+    -- Tab Bar
+    local TabBar = Instance.new("Frame")
+    TabBar.Size = UDim2.new(1, 0, 0, 35)
+    TabBar.BackgroundColor3 = window.CurrentTheme.accent
+    TabBar.BackgroundTransparency = 0.15
+    TabBar.BorderSizePixel = 0
+    TabBar.Parent = Canvas
+
+    local tabY = 40
+    local tabs = {}
+
+    -- Create Tab function
+    function window:CreateTab(name)
+        local tab = {
+            Name = name,
+            yPos = 0
+        }
+
+        local tabBtn = Instance.new("TextButton")
+        tabBtn.Size = UDim2.new(0, 100, 0, 28)
+        tabBtn.Position = UDim2.new(0, (#tabs * 105) + 5, 0, 3)
+        tabBtn.Text = name
+        tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabBtn.BackgroundColor3 = window.CurrentTheme.accent
+        tabBtn.BackgroundTransparency = 0.7
+        tabBtn.Font = Enum.Font.GothamBold
+        tabBtn.TextSize = 12
+        tabBtn.BorderSizePixel = 0
+        tabBtn.Parent = TabBar
+
+        local tabFrame = Instance.new("Frame")
+        tabFrame.Size = UDim2.new(1, 0, 0, 0)
+        tabFrame.Position = UDim2.new(0, 0, 0, tabY)
+        tabFrame.BackgroundTransparency = 1
+        tabFrame.Visible = false
+        tabFrame.Parent = Canvas
+
+        tab.Frame = tabFrame
+        tab.Button = tabBtn
+
+        tabBtn.MouseButton1Click:Connect(function()
+            for i, t in pairs(tabs) do
+                t.Frame.Visible = false
+                t.Button.BackgroundTransparency = 0.7
+            end
+            tabFrame.Visible = true
+            tabBtn.BackgroundTransparency = 0
+            window:UpdateCanvas()
+        end)
+
+        table.insert(tabs, tab)
+
+        if #tabs == 1 then
+            tabFrame.Visible = true
+            tabBtn.BackgroundTransparency = 0
+        end
+
+        function window:UpdateCanvas()
+            local totalHeight = tabY
+            for _, t in pairs(tabs) do
+                if t.Frame.Visible then
+                    for _, child in pairs(t.Frame:GetChildren()) do
+                        if child:IsA("Frame") or child:IsA("TextLabel") or child:IsA("TextButton") then
+                            if child.Size and child.Size.Y then
+                                totalHeight = totalHeight + child.Size.Y.Offset + 5
                             end
                         end
-                    end)
+                    end
+                end
+            end
+            Canvas.Size = UDim2.new(1, 0, 0, totalHeight + 100)
+            ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight + 120)
+        end
+
+        function tab:CreateLabel(text, color)
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(1, -10, 0, 25)
+            label.Position = UDim2.new(0, 5, 0, tab.yPos)
+            label.Text = text
+            label.TextColor3 = color or Color3.fromRGB(200, 200, 200)
+            label.BackgroundTransparency = 1
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 12
+            label.Parent = tab.Frame
+            tab.yPos = tab.yPos + 30
+            window:UpdateCanvas()
+            return label
+        end
+
+        function tab:CreateToggle(config)
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, -10, 0, 38)
+            frame.Position = UDim2.new(0, 5, 0, tab.yPos)
+            frame.BackgroundColor3 = window.CurrentTheme.accent
+            frame.BackgroundTransparency = 0.15
+            frame.BorderSizePixel = 0
+            frame.Parent = tab.Frame
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(0.65, 0, 1, 0)
+            label.Position = UDim2.new(0, 10, 0, 0)
+            label.Text = config.Name or "Toggle"
+            label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            label.BackgroundTransparency = 1
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 13
+            label.Parent = frame
+
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0, 70, 0, 28)
+            btn.Position = UDim2.new(1, -75, 0, 5)
+            btn.Text = config.Default and "ON" or "OFF"
+            btn.TextColor3 = config.Default and Color3.fromRGB(200, 255, 200) or Color3.fromRGB(255, 200, 200)
+            btn.BackgroundColor3 = config.Default and Color3.fromRGB(20, 80, 20) or Color3.fromRGB(60, 0, 20)
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 12
+            btn.BorderSizePixel = 0
+            btn.Parent = frame
+
+            local state = config.Default or false
+
+            btn.MouseButton1Click:Connect(function()
+                state = not state
+                btn.Text = state and "ON" or "OFF"
+                btn.TextColor3 = state and Color3.fromRGB(200, 255, 200) or Color3.fromRGB(255, 200, 200)
+                btn.BackgroundColor3 = state and Color3.fromRGB(20, 80, 20) or Color3.fromRGB(60, 0, 20)
+                if config.Callback then
+                    config.Callback(state)
                 end
             end)
-        end
-    end
-})
 
-AutoFarmTab:CreateToggle({
-    Name = "💰 Auto Collect",
-    Default = false,
-    Callback = function(state)
-        autoCollect = state
-        if state then
-            task.spawn(function()
-                while autoCollect and task.wait(0.5) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("collect") or v.Name:lower():find("claim")) then
-                                v:FireServer()
-                                break
+            tab.yPos = tab.yPos + 43
+            window:UpdateCanvas()
+            return btn
+        end
+
+        function tab:CreateButton(config)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, -10, 0, 38)
+            btn.Position = UDim2.new(0, 5, 0, tab.yPos)
+            btn.Text = config.Name or "Button"
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.BackgroundColor3 = window.CurrentTheme.accent
+            btn.BackgroundTransparency = 0.2
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 14
+            btn.BorderSizePixel = 0
+            btn.Parent = tab.Frame
+
+            btn.MouseEnter:Connect(function()
+                btn.BackgroundTransparency = 0
+            end)
+            btn.MouseLeave:Connect(function()
+                btn.BackgroundTransparency = 0.2
+            end)
+
+            btn.MouseButton1Click:Connect(function()
+                if config.Callback then
+                    config.Callback()
+                end
+            end)
+
+            tab.yPos = tab.yPos + 43
+            window:UpdateCanvas()
+            return btn
+        end
+
+        function tab:CreateTextBox(config)
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, -10, 0, 38)
+            frame.Position = UDim2.new(0, 5, 0, tab.yPos)
+            frame.BackgroundColor3 = window.CurrentTheme.accent
+            frame.BackgroundTransparency = 0.15
+            frame.BorderSizePixel = 0
+            frame.Parent = tab.Frame
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(0.3, 0, 1, 0)
+            label.Position = UDim2.new(0, 10, 0, 0)
+            label.Text = config.Name or ""
+            label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            label.BackgroundTransparency = 1
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 12
+            label.Parent = frame
+
+            local box = Instance.new("TextBox")
+            box.Size = UDim2.new(0.6, 0, 1, -10)
+            box.Position = UDim2.new(0.35, 0, 0, 5)
+            box.PlaceholderText = config.Placeholder or ""
+            box.Text = ""
+            box.TextColor3 = Color3.fromRGB(255, 255, 255)
+            box.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+            box.Font = Enum.Font.Gotham
+            box.TextSize = 12
+            box.BorderSizePixel = 0
+            box.Parent = frame
+
+            box.FocusLost:Connect(function(enterPressed)
+                if enterPressed and config.Callback then
+                    config.Callback(box.Text)
+                end
+            end)
+
+            tab.yPos = tab.yPos + 43
+            window:UpdateCanvas()
+            return box
+        end
+
+        function tab:CreateDropdown(config)
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, -10, 0, 38)
+            frame.Position = UDim2.new(0, 5, 0, tab.yPos)
+            frame.BackgroundColor3 = window.CurrentTheme.accent
+            frame.BackgroundTransparency = 0.15
+            frame.BorderSizePixel = 0
+            frame.Parent = tab.Frame
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(0.3, 0, 1, 0)
+            label.Position = UDim2.new(0, 10, 0, 0)
+            label.Text = config.Name or ""
+            label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            label.BackgroundTransparency = 1
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 12
+            label.Parent = frame
+
+            local dropdown = Instance.new("TextButton")
+            dropdown.Size = UDim2.new(0.6, 0, 1, -10)
+            dropdown.Position = UDim2.new(0.35, 0, 0, 5)
+            dropdown.Text = config.Default or config.Options[1] or ""
+            dropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+            dropdown.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+            dropdown.Font = Enum.Font.Gotham
+            dropdown.TextSize = 12
+            dropdown.BorderSizePixel = 0
+            dropdown.Parent = frame
+
+            local expanded = false
+            local optionsFrame = nil
+
+            dropdown.MouseButton1Click:Connect(function()
+                expanded = not expanded
+                if expanded then
+                    optionsFrame = Instance.new("Frame")
+                    optionsFrame.Size = UDim2.new(0.6, 0, 0, #config.Options * 25)
+                    optionsFrame.Position = UDim2.new(0.35, 0, 1, 0)
+                    optionsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+                    optionsFrame.BorderSizePixel = 1
+                    optionsFrame.BorderColor3 = window.CurrentTheme.accent
+                    optionsFrame.Parent = frame
+
+                    for i, option in pairs(config.Options) do
+                        local optBtn = Instance.new("TextButton")
+                        optBtn.Size = UDim2.new(1, 0, 0, 25)
+                        optBtn.Position = UDim2.new(0, 0, 0, (i-1) * 25)
+                        optBtn.Text = option
+                        optBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        optBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
+                        optBtn.Font = Enum.Font.Gotham
+                        optBtn.TextSize = 12
+                        optBtn.BorderSizePixel = 0
+                        optBtn.Parent = optionsFrame
+
+                        optBtn.MouseButton1Click:Connect(function()
+                            dropdown.Text = option
+                            if config.Callback then
+                                config.Callback(option)
                             end
-                        end
-                    end)
+                            optionsFrame:Destroy()
+                            expanded = false
+                        end)
+                    end
+                else
+                    if optionsFrame then
+                        optionsFrame:Destroy()
+                        optionsFrame = nil
+                    end
                 end
             end)
+
+            tab.yPos = tab.yPos + 43
+            window:UpdateCanvas()
+            return dropdown
+        end
+
+        return tab
+    end
+
+    -- SetTheme function
+    function window:SetTheme(themeName)
+        local theme = Themes[themeName]
+        if theme then
+            window.CurrentTheme = theme
+            MainFrame.BackgroundColor3 = theme.bg
+            MainFrame.BorderColor3 = theme.accent
+            TitleBar.BackgroundColor3 = theme.accent
+            TabBar.BackgroundColor3 = theme.accent
+            ScrollFrame.ScrollBarImageColor3 = theme.accent
+
+            Gradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, theme.bg),
+                ColorSequenceKeypoint.new(0.5, theme.accent),
+                ColorSequenceKeypoint.new(1, theme.bg)
+            })
         end
     end
-})
 
-AutoFarmTab:CreateToggle({
-    Name = "🥚 Auto Hatch",
-    Default = false,
-    Callback = function(state)
-        autoHatch = state
-        if state then
-            task.spawn(function()
-                while autoHatch and task.wait(2) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("hatch") or v.Name:lower():find("egg")) then
-                                v:FireServer()
-                                break
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-AutoFarmTab:CreateToggle({
-    Name = "🛒 Auto Merchant",
-    Default = false,
-    Callback = function(state)
-        autoMerchant = state
-        if state then
-            task.spawn(function()
-                while autoMerchant and task.wait(3) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("merchant") or v.Name:lower():find("shop") or v.Name:lower():find("buy")) then
-                                v:FireServer("All")
-                                break
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-AutoFarmTab:CreateToggle({
-    Name = "🎪 Auto Join Event",
-    Default = false,
-    Callback = function(state)
-        autoEvent = state
-        if state then
-            task.spawn(function()
-                while autoEvent and task.wait(2) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("event") or v.Name:lower():find("join")) then
-                                v:FireServer("Summer")
-                                break
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-AutoFarmTab:CreateToggle({
-    Name = "🌱 Auto Plant Plot",
-    Default = false,
-    Callback = function(state)
-        autoPlant = state
-        if state then
-            task.spawn(function()
-                while autoPlant and task.wait(1) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("plant") or v.Name:lower():find("plot")) then
-                                v:FireServer()
-                                break
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-AutoFarmTab:CreateToggle({
-    Name = "🐾 Auto Pet Plot",
-    Default = false,
-    Callback = function(state)
-        autoPet = state
-        if state then
-            task.spawn(function()
-                while autoPet and task.wait(1) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("pet") or v.Name:lower():find("place")) then
-                                v:FireServer()
-                                break
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-AutoFarmTab:CreateToggle({
-    Name = "🔄 Auto Rebirth",
-    Default = false,
-    Callback = function(state)
-        autoRebirth = state
-        if state then
-            task.spawn(function()
-                while autoRebirth and task.wait(3) do
-                    pcall(function()
-                        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-                        for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-                            if v:IsA("RemoteEvent") and (v.Name:lower():find("rebirth") or v.Name:lower():find("prestige")) then
-                                v:FireServer()
-                                break
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-SettingsTab:CreateToggle({
-    Name = "🛡️ Anti AFK",
-    Default = false,
-    Callback = function(state)
-        antiAFK = state
-        if state then
-            task.spawn(function()
-                while antiAFK and task.wait(60) do
-                    pcall(function()
-                        local VirtualUser = game:GetService("VirtualUser")
-                        VirtualUser:CaptureController()
-                        VirtualUser:ClickButton2(Vector2.new())
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-SettingsTab:CreateToggle({
-    Name = "🎬 Hide Egg Animation",
-    Default = false,
-    Callback = function(state)
-        pcall(function()
-            local player = game.Players.LocalPlayer
-            local eggAnim = player.PlayerGui:FindFirstChild("EggAnimation")
-            if eggAnim then
-                eggAnim.Enabled = not state
+    -- Keyboard toggle
+    if window.DefaultToggleKey then
+        game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+            if gameProcessed then return end
+            if input.KeyCode == window.DefaultToggleKey then
+                MainFrame.Visible = not MainFrame.Visible
             end
         end)
     end
-})
 
-SettingsTab:CreateDropdown({
-    Name = "Theme Change",
-    Default = "Ocean",
-    Options = {"Classic", "Assassin", "Cyberpunk", "Matrix", "Ocean", "Gold"},
-    Callback = function(theme)
-        Window:SetTheme(theme)
-    end
-})
+    return window
+end
 
-print("========================================")
-print("✅ qvirthh Hub | PS99 Loaded Successfully!")
-print("========================================")
-
-task.spawn(function()
-    while task.wait(60) do
-        pcall(function()
-            local VirtualUser = game:GetService("VirtualUser")
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
-        end)
-    end
-end)
+return Library
