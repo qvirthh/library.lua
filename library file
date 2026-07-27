@@ -1,4 +1,4 @@
--- Galaxy Hub UI Library
+-- qvirthh Hub UI Library
 -- Made By qvirthh
 -- Version 1.0
 
@@ -19,21 +19,21 @@ local Themes = {
 function Library:CreateWindow(config)
     config = config or {}
     local window = {
-        Title = config.Title or "Galaxy Hub",
-        HubName = config.HubName or "Galaxy Hub",
+        Title = config.Title or "qvirthh Hub",
+        HubName = config.HubName or "qvirthh Hub",
         Theme = config.Theme or "Ocean",
         SizeUI = config.SizeUI or 1,
         DefaultToggleKey = config.DefaultToggleKey or Enum.KeyCode.LeftControl,
         UseKey = config.UseKey or false,
         CurrentTheme = Themes[config.Theme] or Themes.Ocean
     }
-    
+
     -- Create ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = window.HubName
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
     ScreenGui.ResetOnSpawn = false
-    
+
     -- Main Frame
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 420 * window.SizeUI, 0, 520 * window.SizeUI)
@@ -45,7 +45,7 @@ function Library:CreateWindow(config)
     MainFrame.Draggable = true
     MainFrame.ClipsDescendants = true
     MainFrame.Parent = ScreenGui
-    
+
     -- Gradient Background
     local Gradient = Instance.new("UIGradient")
     Gradient.Color = ColorSequence.new({
@@ -56,7 +56,7 @@ function Library:CreateWindow(config)
     Gradient.Rotation = 45
     Gradient.Transparency = NumberSequence.new(0.8)
     Gradient.Parent = MainFrame
-    
+
     -- Title Bar
     local TitleBar = Instance.new("Frame")
     TitleBar.Size = UDim2.new(1, 0, 0, 50)
@@ -64,7 +64,7 @@ function Library:CreateWindow(config)
     TitleBar.BackgroundTransparency = 0.2
     TitleBar.BorderSizePixel = 0
     TitleBar.Parent = MainFrame
-    
+
     -- Title Text
     local Title = Instance.new("TextLabel")
     Title.Size = UDim2.new(0.8, 0, 0.6, 0)
@@ -76,7 +76,7 @@ function Library:CreateWindow(config)
     Title.Font = Enum.Font.GothamBold
     Title.TextSize = 18
     Title.Parent = TitleBar
-    
+
     -- Subtitle
     local SubTitle = Instance.new("TextLabel")
     SubTitle.Size = UDim2.new(0.8, 0, 0.3, 0)
@@ -88,7 +88,7 @@ function Library:CreateWindow(config)
     SubTitle.Font = Enum.Font.Gotham
     SubTitle.TextSize = 11
     SubTitle.Parent = TitleBar
-    
+
     -- Close Button
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 35, 1, -10)
@@ -100,11 +100,11 @@ function Library:CreateWindow(config)
     CloseBtn.TextSize = 16
     CloseBtn.BorderSizePixel = 0
     CloseBtn.Parent = TitleBar
-    
+
     CloseBtn.MouseButton1Click:Connect(function()
         ScreenGui:Destroy()
     end)
-    
+
     -- Minimize Button
     local MinBtn = Instance.new("TextButton")
     MinBtn.Size = UDim2.new(0, 35, 1, -10)
@@ -116,7 +116,7 @@ function Library:CreateWindow(config)
     MinBtn.TextSize = 16
     MinBtn.BorderSizePixel = 0
     MinBtn.Parent = TitleBar
-    
+
     local minimized = false
     MinBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
@@ -130,7 +130,7 @@ function Library:CreateWindow(config)
             MinBtn.Text = "─"
         end
     end)
-    
+
     -- Scroll Frame
     local ScrollFrame = Instance.new("ScrollingFrame")
     ScrollFrame.Size = UDim2.new(1, 0, 1, -50)
@@ -141,12 +141,12 @@ function Library:CreateWindow(config)
     ScrollFrame.ScrollBarThickness = 6
     ScrollFrame.ScrollBarImageColor3 = window.CurrentTheme.accent
     ScrollFrame.Parent = MainFrame
-    
+
     local Canvas = Instance.new("Frame")
     Canvas.Size = UDim2.new(1, 0, 0, 0)
     Canvas.BackgroundTransparency = 1
     Canvas.Parent = ScrollFrame
-    
+
     -- Tab Bar
     local TabBar = Instance.new("Frame")
     TabBar.Size = UDim2.new(1, 0, 0, 35)
@@ -154,11 +154,11 @@ function Library:CreateWindow(config)
     TabBar.BackgroundTransparency = 0.15
     TabBar.BorderSizePixel = 0
     TabBar.Parent = Canvas
-    
+
     local tabY = 40
     local tabs = {}
     local currentTabIndex = 1
-    
+
     -- Create Tab function
     function window:CreateTab(name)
         local tab = {
@@ -166,7 +166,7 @@ function Library:CreateWindow(config)
             Elements = {},
             yPos = 0
         }
-        
+
         local tabBtn = Instance.new("TextButton")
         tabBtn.Size = UDim2.new(0, 100, 0, 28)
         tabBtn.Position = UDim2.new(0, (#tabs * 105) + 5, 0, 3)
@@ -178,17 +178,17 @@ function Library:CreateWindow(config)
         tabBtn.TextSize = 12
         tabBtn.BorderSizePixel = 0
         tabBtn.Parent = TabBar
-        
+
         local tabFrame = Instance.new("Frame")
         tabFrame.Size = UDim2.new(1, 0, 0, 0)
         tabFrame.Position = UDim2.new(0, 0, 0, tabY)
         tabFrame.BackgroundTransparency = 1
         tabFrame.Visible = false
         tabFrame.Parent = Canvas
-        
+
         tab.Frame = tabFrame
         tab.Button = tabBtn
-        
+
         tabBtn.MouseButton1Click:Connect(function()
             for i, t in pairs(tabs) do
                 t.Frame.Visible = false
@@ -199,15 +199,15 @@ function Library:CreateWindow(config)
             currentTabIndex = #tabs
             window:UpdateCanvas()
         end)
-        
+
         table.insert(tabs, tab)
-        
+
         -- If first tab, show it
         if #tabs == 1 then
             tabFrame.Visible = true
             tabBtn.BackgroundTransparency = 0
         end
-        
+
         -- Update canvas when elements are added
         function window:UpdateCanvas()
             local totalHeight = tabY
@@ -225,7 +225,7 @@ function Library:CreateWindow(config)
             Canvas.Size = UDim2.new(1, 0, 0, totalHeight + 100)
             ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight + 120)
         end
-        
+
         -- Tab functions
         function tab:CreateLabel(text, color)
             local label = Instance.new("TextLabel")
@@ -241,7 +241,7 @@ function Library:CreateWindow(config)
             window:UpdateCanvas()
             return label
         end
-        
+
         function tab:CreateToggle(config)
             local frame = Instance.new("Frame")
             frame.Size = UDim2.new(1, -10, 0, 38)
@@ -250,7 +250,7 @@ function Library:CreateWindow(config)
             frame.BackgroundTransparency = 0.15
             frame.BorderSizePixel = 0
             frame.Parent = tab.Frame
-            
+
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(0.65, 0, 1, 0)
             label.Position = UDim2.new(0, 10, 0, 0)
@@ -261,7 +261,7 @@ function Library:CreateWindow(config)
             label.Font = Enum.Font.Gotham
             label.TextSize = 13
             label.Parent = frame
-            
+
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(0, 70, 0, 28)
             btn.Position = UDim2.new(1, -75, 0, 5)
@@ -272,9 +272,9 @@ function Library:CreateWindow(config)
             btn.TextSize = 12
             btn.BorderSizePixel = 0
             btn.Parent = frame
-            
+
             local state = config.Default or false
-            
+
             btn.MouseButton1Click:Connect(function()
                 state = not state
                 btn.Text = state and "ON" or "OFF"
@@ -284,12 +284,12 @@ function Library:CreateWindow(config)
                     config.Callback(state)
                 end
             end)
-            
+
             tab.yPos = tab.yPos + 43
             window:UpdateCanvas()
             return btn
         end
-        
+
         function tab:CreateButton(config)
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(1, -10, 0, 38)
@@ -302,25 +302,25 @@ function Library:CreateWindow(config)
             btn.TextSize = 14
             btn.BorderSizePixel = 0
             btn.Parent = tab.Frame
-            
+
             btn.MouseEnter:Connect(function()
                 btn.BackgroundTransparency = 0
             end)
             btn.MouseLeave:Connect(function()
                 btn.BackgroundTransparency = 0.2
             end)
-            
+
             btn.MouseButton1Click:Connect(function()
                 if config.Callback then
                     config.Callback()
                 end
             end)
-            
+
             tab.yPos = tab.yPos + 43
             window:UpdateCanvas()
             return btn
         end
-        
+
         function tab:CreateTextBox(config)
             local frame = Instance.new("Frame")
             frame.Size = UDim2.new(1, -10, 0, 38)
@@ -329,7 +329,7 @@ function Library:CreateWindow(config)
             frame.BackgroundTransparency = 0.15
             frame.BorderSizePixel = 0
             frame.Parent = tab.Frame
-            
+
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(0.3, 0, 1, 0)
             label.Position = UDim2.new(0, 10, 0, 0)
@@ -340,7 +340,7 @@ function Library:CreateWindow(config)
             label.Font = Enum.Font.Gotham
             label.TextSize = 12
             label.Parent = frame
-            
+
             local box = Instance.new("TextBox")
             box.Size = UDim2.new(0.6, 0, 1, -10)
             box.Position = UDim2.new(0.35, 0, 0, 5)
@@ -352,18 +352,18 @@ function Library:CreateWindow(config)
             box.TextSize = 12
             box.BorderSizePixel = 0
             box.Parent = frame
-            
+
             box.FocusLost:Connect(function(enterPressed)
                 if enterPressed and config.Callback then
                     config.Callback(box.Text)
                 end
             end)
-            
+
             tab.yPos = tab.yPos + 43
             window:UpdateCanvas()
             return box
         end
-        
+
         function tab:CreateDropdown(config)
             local frame = Instance.new("Frame")
             frame.Size = UDim2.new(1, -10, 0, 38)
@@ -372,7 +372,7 @@ function Library:CreateWindow(config)
             frame.BackgroundTransparency = 0.15
             frame.BorderSizePixel = 0
             frame.Parent = tab.Frame
-            
+
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(0.3, 0, 1, 0)
             label.Position = UDim2.new(0, 10, 0, 0)
@@ -383,7 +383,7 @@ function Library:CreateWindow(config)
             label.Font = Enum.Font.Gotham
             label.TextSize = 12
             label.Parent = frame
-            
+
             local dropdown = Instance.new("TextButton")
             dropdown.Size = UDim2.new(0.6, 0, 1, -10)
             dropdown.Position = UDim2.new(0.35, 0, 0, 5)
@@ -394,10 +394,10 @@ function Library:CreateWindow(config)
             dropdown.TextSize = 12
             dropdown.BorderSizePixel = 0
             dropdown.Parent = frame
-            
+
             local expanded = false
             local optionsFrame = nil
-            
+
             dropdown.MouseButton1Click:Connect(function()
                 expanded = not expanded
                 if expanded then
@@ -408,7 +408,7 @@ function Library:CreateWindow(config)
                     optionsFrame.BorderSizePixel = 1
                     optionsFrame.BorderColor3 = window.CurrentTheme.accent
                     optionsFrame.Parent = frame
-                    
+
                     for i, option in pairs(config.Options) do
                         local optBtn = Instance.new("TextButton")
                         optBtn.Size = UDim2.new(1, 0, 0, 25)
@@ -420,7 +420,7 @@ function Library:CreateWindow(config)
                         optBtn.TextSize = 12
                         optBtn.BorderSizePixel = 0
                         optBtn.Parent = optionsFrame
-                        
+
                         optBtn.MouseButton1Click:Connect(function()
                             dropdown.Text = option
                             if config.Callback then
@@ -437,15 +437,15 @@ function Library:CreateWindow(config)
                     end
                 end
             end)
-            
+
             tab.yPos = tab.yPos + 43
             window:UpdateCanvas()
             return dropdown
         end
-        
+
         return tab
     end
-    
+
     -- SetTheme function
     function window:SetTheme(themeName)
         local theme = Themes[themeName]
@@ -456,7 +456,7 @@ function Library:CreateWindow(config)
             TitleBar.BackgroundColor3 = theme.accent
             TabBar.BackgroundColor3 = theme.accent
             ScrollFrame.ScrollBarImageColor3 = theme.accent
-            
+
             -- Update gradient
             Gradient.Color = ColorSequence.new({
                 ColorSequenceKeypoint.new(0, theme.bg),
@@ -465,7 +465,7 @@ function Library:CreateWindow(config)
             })
         end
     end
-    
+
     -- Keyboard toggle
     if window.DefaultToggleKey then
         game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
@@ -475,7 +475,7 @@ function Library:CreateWindow(config)
             end
         end)
     end
-    
+
     return window
 end
 
